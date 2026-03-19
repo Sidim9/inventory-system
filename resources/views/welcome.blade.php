@@ -1,67 +1,104 @@
 @extends('layouts.app')
 
 @section('content')
+<h1 class="fw-bold mb-1">Dashboard</h1>
+<p class="text-muted mb-4">Overzicht van het inventory systeem.</p>
+
+{{-- KPI cards --}}
 <div class="row g-4 mb-4">
-    <div class="col-12">
-        <h1 class="fw-bold">Welkom bij Inventory System</h1>
-        <p class="text-muted">Beheer uw producten, orders en voorraadbewegingen op een plek.</p>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="display-6 fw-bold text-primary">{{ $totalOrders }}</div>
+                <div class="text-muted small mt-1">Totaal orders</div>
+            </div>
+            <div class="card-footer bg-white border-0 pb-3">
+                <a href="{{ route('orders.index') }}" class="btn btn-sm btn-outline-primary">Bekijk orders</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="display-6 fw-bold text-success">{{ $totalSoldItems }}</div>
+                <div class="text-muted small mt-1">Verkochte producten</div>
+            </div>
+            <div class="card-footer bg-white border-0 pb-3">
+                <a href="{{ route('order_items.index') }}" class="btn btn-sm btn-outline-success">Bekijk orderregels</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card border-0 shadow-sm text-center">
+            <div class="card-body py-4">
+                <div class="display-6 fw-bold {{ $lowStockProducts->count() > 0 ? 'text-danger' : 'text-muted' }}">
+                    {{ $lowStockProducts->count() }}
+                </div>
+                <div class="text-muted small mt-1">Lage voorraad</div>
+            </div>
+            <div class="card-footer bg-white border-0 pb-3">
+                <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-danger">Bekijk producten</a>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="row g-4">
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Producten</h5>
-                <p class="card-text text-muted">Beheer uw productcatalogus, SKUs en voorraadniveaus.</p>
-                <a href="{{ route('products.index') }}" class="btn btn-primary btn-sm">Bekijk producten</a>
-            </div>
+    {{-- Low stock products --}}
+    @if ($lowStockProducts->isNotEmpty())
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold text-danger">⚠ Lage voorraad</div>
+            <ul class="list-group list-group-flush">
+                @foreach ($lowStockProducts as $product)
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ $product->name }}</strong>
+                        <small class="text-muted ms-1">{{ $product->ean ?: $product->sku }}</small>
+                    </div>
+                    <span class="badge bg-danger">{{ $product->stock }} / min {{ $product->minimum_stock }}</span>
+                </li>
+                @endforeach
+            </ul>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Marketplaces</h5>
-                <p class="card-text text-muted">Verbind en configureer uw verkoopkanalen.</p>
-                <a href="{{ route('marketplaces.index') }}" class="btn btn-primary btn-sm">Bekijk marketplaces</a>
+    @endif
+
+    {{-- Latest orders --}}
+    <div class="col">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-semibold">Laatste orders</div>
+            @if ($latestOrders->isEmpty())
+                <div class="card-body text-muted">Nog geen orders aangemaakt.</div>
+            @else
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ordernummer</th>
+                            <th>Klant</th>
+                            <th>Status</th>
+                            <th>Datum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($latestOrders as $order)
+                        @php $statusColors = ['pending'=>'warning','processing'=>'info','shipped'=>'primary','delivered'=>'success','cancelled'=>'danger']; @endphp
+                        <tr>
+                            <td><strong>{{ $order->order_number }}</strong></td>
+                            <td>{{ $order->customer_name ?: '-' }}</td>
+                            <td><span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span></td>
+                            <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
+                            <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a></td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Orders</h5>
-                <p class="card-text text-muted">Bekijk en beheer inkomende orders van alle kanalen.</p>
-                <a href="{{ route('orders.index') }}" class="btn btn-primary btn-sm">Bekijk orders</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Orderregels</h5>
-                <p class="card-text text-muted">Beheer individuele producten binnen een order.</p>
-                <a href="{{ route('order_items.index') }}" class="btn btn-outline-secondary btn-sm">Bekijk orderregels</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Orderadressen</h5>
-                <p class="card-text text-muted">Beheer bezorg- en factuuradressen per order.</p>
-                <a href="{{ route('order_addresses.index') }}" class="btn btn-outline-secondary btn-sm">Bekijk adressen</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Voorraadbewegingen</h5>
-                <p class="card-text text-muted">Volg alle voorraadmutaties en houd de stock up-to-date.</p>
-                <a href="{{ route('stock_movements.index') }}" class="btn btn-outline-secondary btn-sm">Bekijk bewegingen</a>
-            </div>
+            @endif
         </div>
     </div>
 </div>
 @endsection
+
