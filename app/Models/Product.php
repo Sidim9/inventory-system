@@ -9,13 +9,22 @@ class Product extends Model
     protected $fillable = [
         'name',
         'sku',
-        'description',
+        'ean',
+        'type',
+        'color',
+        'price',
         'stock',
         'minimum_stock',
+        'pick_order',
         'is_active',
     ];
 
-    public function orderOtem()
+    protected $casts = [
+        'is_active' => 'boolean',
+        'price'     => 'decimal:2',
+    ];
+
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }

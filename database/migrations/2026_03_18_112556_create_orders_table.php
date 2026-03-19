@@ -10,24 +10,20 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('marketplace_id')
-                ->nullable()
-                ->constrained('marketplaces')
-                ->nullOnDelete();
-
-            $table->string('external_order_id');
-            $table->string('order_number');
+            $table->string('order_number')->unique();
+            $table->string('source')->nullable();
             $table->string('customer_name')->nullable();
             $table->string('customer_email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('street')->nullable();
+            $table->string('house_number')->nullable();
+            $table->string('house_number_addition')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable()->default('NL');
             $table->string('status')->default('pending');
-            $table->timestamp('ordered_at')->nullable();
-            $table->timestamp('imported_at')->nullable();
-            $table->integer('sort_order')->default(0);
-            $table->timestamp('stock_processed_at')->nullable();
-            $table->decimal('total_price', 10, 2)->nullable();
-            $table->string('currency', 10)->nullable();
             $table->text('notes')->nullable();
+            $table->timestamp('ordered_at')->nullable();
             $table->timestamps();
         });
     }

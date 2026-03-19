@@ -12,9 +12,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('sku')->unique();
-            $table->text('description')->nullable();
+            $table->string('ean')->unique()->nullable();
+            $table->string('type')->nullable();
+            $table->string('color')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
             $table->integer('stock')->default(0);
             $table->integer('minimum_stock')->default(0);
+            $table->integer('pick_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

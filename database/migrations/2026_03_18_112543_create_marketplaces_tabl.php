@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->string('api_base_url')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

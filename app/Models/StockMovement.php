@@ -7,11 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class StockMovement extends Model
 {
     protected $fillable = [
-        'order_id',
         'product_id',
+        'order_id',
         'type',
         'quantity_change',
-        'stock_change',
         'stock_before',
         'stock_after',
         'note',

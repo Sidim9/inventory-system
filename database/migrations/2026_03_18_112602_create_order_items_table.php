@@ -20,9 +20,11 @@ return new class extends Migration
                 ->constrained('products')
                 ->nullOnDelete();
 
-            $table->string('sku');
+            $table->string('ean')->nullable();
+            $table->string('sku')->nullable();
             $table->string('product_name');
             $table->integer('quantity');
+            $table->decimal('unit_price', 10, 2)->nullable();
             $table->timestamps();
         });
     }
