@@ -7,40 +7,36 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-    */
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::orderBy('pick_order')->orderBy('name')->get();
 
         return view('products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('products.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
-            'description' => ['nullable', 'string'],
-            'stock' => ['required', 'integer', 'min:0'],
+            'name'          => ['required', 'string', 'max:255'],
+            'sku'           => ['required', 'string', 'max:255', 'unique:products,sku'],
+            'ean'           => ['nullable', 'string', 'max:255', 'unique:products,ean'],
+            'type'          => ['nullable', 'string', 'max:255'],
+            'color'         => ['nullable', 'string', 'max:255'],
+            'price'         => ['nullable', 'numeric', 'min:0'],
+            'stock'         => ['required', 'integer', 'min:0'],
             'minimum_stock' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
+            'pick_order'    => ['nullable', 'integer', 'min:0'],
+            'is_active'     => ['nullable', 'boolean'],
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active']     = $request->has('is_active');
         $validated['minimum_stock'] = $validated['minimum_stock'] ?? 0;
+        $validated['pick_order']    = $validated['pick_order'] ?? 0;
 
         Product::create($validated);
 
@@ -77,16 +73,21 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'sku' => ['required', 'string', 'max:255', 'unique:products,sku,' . $product->id],
-            'description' => ['nullable', 'string'],
-            'stock' => ['required', 'integer', 'min:0'],
+            'name'          => ['required', 'string', 'max:255'],
+            'sku'           => ['required', 'string', 'max:255', 'unique:products,sku,' . $product->id],
+            'ean'           => ['nullable', 'string', 'max:255', 'unique:products,ean,' . $product->id],
+            'type'          => ['nullable', 'string', 'max:255'],
+            'color'         => ['nullable', 'string', 'max:255'],
+            'price'         => ['nullable', 'numeric', 'min:0'],
+            'stock'         => ['required', 'integer', 'min:0'],
             'minimum_stock' => ['nullable', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
+            'pick_order'    => ['nullable', 'integer', 'min:0'],
+            'is_active'     => ['nullable', 'boolean'],
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active']     = $request->has('is_active');
         $validated['minimum_stock'] = $validated['minimum_stock'] ?? 0;
+        $validated['pick_order']    = $validated['pick_order'] ?? 0;
 
         $product->update($validated);
 
