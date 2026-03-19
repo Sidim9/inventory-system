@@ -37,7 +37,6 @@ class StockMovementController extends Controller
         $product = Product::findOrFail($validated['product_id']);
 
         $validated['stock_before'] = $product->stock;
-        $validated['stock_change'] = $validated['quantity_change'];
         $validated['stock_after']  = $product->stock + $validated['quantity_change'];
 
         StockMovement::create($validated);
@@ -76,8 +75,6 @@ class StockMovementController extends Controller
             'quantity_change' => ['required', 'integer'],
             'note'       => ['nullable', 'string', 'max:500'],
         ]);
-
-        $validated['stock_change'] = $validated['quantity_change'];
 
         $stockMovement->update($validated);
 
