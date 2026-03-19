@@ -3,46 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Marketplace;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('marketplace')->latest()->get();
+        $orders = Order::latest('ordered_at')->get();
 
         return view('orders.index', compact('orders'));
     }
 
     public function create()
     {
-        $marketplaces = Marketplace::all();
-
-        return view('orders.create', compact('marketplaces'));
+        return view('orders.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'marketplace_id' => ['nullable', 'exists:marketplaces,id'],
-            'order_number' => ['required'],
-            'external_order_id' => ['nullable'],
-            'customer_name' => ['nullable'],
-            'customer_email' => ['nullable', 'email'],
-            'status' => ['required'],
-            'sort_order' => ['nullable', 'integer'],
+            'order_number'           => ['required', 'string', 'max:255', 'unique:orders,order_number'],
+            'source'                 => ['nullable', 'string', 'max:255'],
+            'customer_name'          => ['nullable', 'string', 'max:255'],
+            'customer_email'         => ['nullable', 'email', 'max:255'],
+            'phone'                  => ['nullable', 'string', 'max:50'],
+            'street'                 => ['nullable', 'string', 'max:255'],
+            'house_number'           => ['nullable', 'string', 'max:20'],
+            'house_number_addition'  => ['nullable', 'string', 'max:20'],
+            'postal_code'            => ['nullable', 'string', 'max:20'],
+            'city'                   => ['nullable', 'string', 'max:255'],
+            'country'                => ['nullable', 'string', 'max:10'],
+            'status'                 => ['required', 'string', 'max:50'],
+            'notes'                  => ['nullable', 'string'],
+            'ordered_at'             => ['nullable', 'date'],
         ]);
 
-        Order::create($validated);
+        $validated['ordered_at'] = $validated['ordered_at'] ?? now();
 
-        return redirect()->route('orders.index')
-            ->with('success', 'Order aangemaakt');
+        $order = Order::create($validated);
+
+        return redirect()
+            ->route('orders.show', $order->id)
+            ->with('success', 'Order succesvol aangemaakt. Voeg nu producten toe.');
     }
 
     public function show(string $id)
     {
-        $order = Order::with('marketplace')->findOrFail($id);
+        $order = Order::with(['items.product', 'stockMovements.product'])->findOrFail($id);
 
         return view('orders.show', compact('order'));
     }
@@ -50,9 +57,8 @@ class OrderController extends Controller
     public function edit(string $id)
     {
         $order = Order::findOrFail($id);
-        $marketplaces = Marketplace::all();
 
-        return view('orders.edit', compact('order', 'marketplaces'));
+        return view('orders.edit', compact('order'));
     }
 
     public function update(Request $request, string $id)
@@ -60,19 +66,27 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         $validated = $request->validate([
-            'marketplace_id' => ['nullable', 'exists:marketplaces,id'],
-            'order_number' => ['required'],
-            'external_order_id' => ['nullable'],
-            'customer_name' => ['nullable'],
-            'customer_email' => ['nullable', 'email'],
-            'status' => ['required'],
-            'sort_order' => ['nullable', 'integer'],
+            'order_number'           => ['required', 'string', 'max:255', 'unique:orders,order_number,' . $order->id],
+            'source'                 => ['nullable', 'string', 'max:255'],
+            'customer_name'          => ['nullable', 'string', 'max:255'],
+            'customer_email'         => ['nullable', 'email', 'max:255'],
+            'phone'                  => ['nullable', 'string', 'max:50'],
+            'street'                 => ['nullable', 'string', 'max:255'],
+            'house_number'           => ['nullable', 'string', 'max:20'],
+            'house_number_addition'  => ['nullable', 'string', 'max:20'],
+            'postal_code'            => ['nullable', 'string', 'max:20'],
+            'city'                   => ['nullable', 'string', 'max:255'],
+            'country'                => ['nullable', 'string', 'max:10'],
+            'status'                 => ['required', 'string', 'max:50'],
+            'notes'                  => ['nullable', 'string'],
+            'ordered_at'             => ['nullable', 'date'],
         ]);
 
         $order->update($validated);
 
-        return redirect()->route('orders.index')
-            ->with('success', 'Order geüpdatet');
+        return redirect()
+            ->route('orders.show', $order->id)
+            ->with('success', 'Order succesvol bijgewerkt.');
     }
 
     public function destroy(string $id)
@@ -80,7 +94,8 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->delete();
 
-        return redirect()->route('orders.index')
-            ->with('success', 'Order verwijderd');
+        return redirect()
+            ->route('orders.index')
+            ->with('success', 'Order verwijderd.');
     }
 }
