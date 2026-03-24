@@ -27,11 +27,11 @@ class StockMovementController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'order_id'   => ['nullable', 'exists:orders,id'],
-            'type'       => ['required', 'in:in,out,adjustment'],
-            'quantity_change' => ['required', 'integer'],
-            'note'       => ['nullable', 'string', 'max:500'],
+            'product_id'=> ['required', 'exists:products,id'],
+            'order_id'=> ['nullable', 'exists:orders,id'],
+            'type'=> ['required', 'in:in,out,adjustment'],
+            'quantity_change'=> ['required', 'integer'],
+            'note'=> ['nullable', 'string', 'max:500'],
         ]);
 
         $product = Product::findOrFail($validated['product_id']);
@@ -69,11 +69,11 @@ class StockMovementController extends Controller
         $stockMovement = StockMovement::findOrFail($id);
 
         $validated = $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
-            'order_id'   => ['nullable', 'exists:orders,id'],
-            'type'       => ['required', 'in:in,out,adjustment'],
-            'quantity_change' => ['required', 'integer'],
-            'note'       => ['nullable', 'string', 'max:500'],
+            'product_id'=> ['required', 'exists:products,id'],
+            'order_id'=> ['nullable', 'exists:orders,id'],
+            'type'=> ['required', 'in:in,out,adjustment'],
+            'quantity_change'=> ['required', 'integer'],
+            'note'=> ['nullable', 'string', 'max:500'],
         ]);
 
         $stockMovement->update($validated);

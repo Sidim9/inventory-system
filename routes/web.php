@@ -14,5 +14,4 @@ Route::resource('products', ProductController::class);
 Route::resource('orders', OrderController::class);
 Route::resource('order_items', OrderItemController::class);
 Route::resource('stock_movements', StockMovementController::class);
-Route::resource('marketplaces', MarketplaceController::class);
 

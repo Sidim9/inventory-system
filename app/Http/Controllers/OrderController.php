@@ -16,29 +16,32 @@ class OrderController extends Controller
 
     public function create()
     {
-        return view('orders.create');
+        $suggestedOrderNumber = Order::generateOrderNumber();
+
+        return view('orders.create', compact('suggestedOrderNumber'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'order_number'           => ['required', 'string', 'max:255', 'unique:orders,order_number'],
-            'source'                 => ['nullable', 'string', 'max:255'],
-            'customer_name'          => ['nullable', 'string', 'max:255'],
-            'customer_email'         => ['nullable', 'email', 'max:255'],
-            'phone'                  => ['nullable', 'string', 'max:50'],
-            'street'                 => ['nullable', 'string', 'max:255'],
-            'house_number'           => ['nullable', 'string', 'max:20'],
-            'house_number_addition'  => ['nullable', 'string', 'max:20'],
-            'postal_code'            => ['nullable', 'string', 'max:20'],
-            'city'                   => ['nullable', 'string', 'max:255'],
-            'country'                => ['nullable', 'string', 'max:10'],
-            'status'                 => ['required', 'string', 'max:50'],
-            'notes'                  => ['nullable', 'string'],
-            'ordered_at'             => ['nullable', 'date'],
+            'order_number'=> ['nullable', 'string', 'max:255', 'unique:orders,order_number'],
+            'source'=> ['nullable', 'string', 'max:255'],
+            'customer_name'=> ['nullable', 'string', 'max:255'],
+            'customer_email'=> ['nullable', 'email', 'max:255'],
+            'phone'=> ['nullable', 'string', 'max:50'],
+            'street'=> ['nullable', 'string', 'max:255'],
+            'house_number'=> ['nullable', 'string', 'max:20'],
+            'house_number_addition'=> ['nullable', 'string', 'max:20'],
+            'postal_code'=> ['nullable', 'string', 'max:20'],
+            'city'=> ['nullable', 'string', 'max:255'],
+            'country'=> ['nullable', 'string', 'max:10'],
+            'status'=> ['required', 'string', 'max:50'],
+            'notes'=> ['nullable', 'string'],
+            'ordered_at'=> ['nullable', 'date'],
         ]);
 
-        $validated['ordered_at'] = $validated['ordered_at'] ?? now();
+        $validated['ordered_at']   = $validated['ordered_at'] ?? now();
+        $validated['order_number']  = $validated['order_number'] ?: Order::generateOrderNumber();
 
         $order = Order::create($validated);
 
@@ -66,20 +69,20 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         $validated = $request->validate([
-            'order_number'           => ['required', 'string', 'max:255', 'unique:orders,order_number,' . $order->id],
-            'source'                 => ['nullable', 'string', 'max:255'],
-            'customer_name'          => ['nullable', 'string', 'max:255'],
-            'customer_email'         => ['nullable', 'email', 'max:255'],
-            'phone'                  => ['nullable', 'string', 'max:50'],
-            'street'                 => ['nullable', 'string', 'max:255'],
-            'house_number'           => ['nullable', 'string', 'max:20'],
-            'house_number_addition'  => ['nullable', 'string', 'max:20'],
-            'postal_code'            => ['nullable', 'string', 'max:20'],
-            'city'                   => ['nullable', 'string', 'max:255'],
-            'country'                => ['nullable', 'string', 'max:10'],
-            'status'                 => ['required', 'string', 'max:50'],
-            'notes'                  => ['nullable', 'string'],
-            'ordered_at'             => ['nullable', 'date'],
+            'order_number'=> ['required', 'string', 'max:255', 'unique:orders,order_number,' . $order->id],
+            'source'=> ['nullable', 'string', 'max:255'],
+            'customer_name'=> ['nullable', 'string', 'max:255'],
+            'customer_email'=> ['nullable', 'email', 'max:255'],
+            'phone'=> ['nullable', 'string', 'max:50'],
+            'street'=> ['nullable', 'string', 'max:255'],
+            'house_number'=> ['nullable', 'string', 'max:20'],
+            'house_number_addition'=> ['nullable', 'string', 'max:20'],
+            'postal_code'=> ['nullable', 'string', 'max:20'],
+            'city'=> ['nullable', 'string', 'max:255'],
+            'country'=> ['nullable', 'string', 'max:10'],
+            'status'=> ['required', 'string', 'max:50'],
+            'notes'=> ['nullable', 'string'],
+            'ordered_at'=> ['nullable', 'date'],
         ]);
 
         $order->update($validated);

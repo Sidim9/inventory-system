@@ -27,6 +27,13 @@ class Order extends Model
         'ordered_at' => 'datetime',
     ];
 
+    public static function generateOrderNumber(): string
+    {
+        $prefix = 'INV-' . now()->format('Ymd') . '-';
+        $count = static::where('order_number', 'like', $prefix . '%')->count();
+        return $prefix . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+    }
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);

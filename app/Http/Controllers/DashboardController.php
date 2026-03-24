@@ -18,7 +18,7 @@ class DashboardController extends Controller
             ->get();
         $latestOrders       = Order::with('items')
             ->latest('ordered_at')
-            ->limit(5)
+            ->limit(50)
             ->get();
 
         return view('welcome', compact(

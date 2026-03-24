@@ -25,19 +25,19 @@ class OrderAddressController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'order_id'              => ['required', 'exists:orders,id'],
-            'type'                  => ['required', 'string', 'max:50'],
-            'first_name'            => ['nullable', 'string', 'max:255'],
-            'last_name'             => ['nullable', 'string', 'max:255'],
-            'company'               => ['nullable', 'string', 'max:255'],
-            'street'                => ['nullable', 'string', 'max:255'],
-            'house_number'          => ['nullable', 'string', 'max:20'],
-            'house_number_addition' => ['nullable', 'string', 'max:20'],
-            'postal_code'           => ['nullable', 'string', 'max:20'],
-            'city'                  => ['nullable', 'string', 'max:255'],
-            'state'                 => ['nullable', 'string', 'max:255'],
-            'country'               => ['nullable', 'string', 'max:255'],
-            'phone'                 => ['nullable', 'string', 'max:50'],
+            'order_id'=> ['required', 'exists:orders,id'],
+            'type'=> ['required', 'string', 'max:50'],
+            'first_name'=> ['nullable', 'string', 'max:255'],
+            'last_name'=> ['nullable', 'string', 'max:255'],
+            'company'=> ['nullable', 'string', 'max:255'],
+            'street'=> ['nullable', 'string', 'max:255'],
+            'house_number'=> ['nullable', 'string', 'max:20'],
+            'house_number_addition'=> ['nullable', 'string', 'max:20'],
+            'postal_code'=> ['nullable', 'string', 'max:20'],
+            'city'=> ['nullable', 'string', 'max:255'],
+            'state'=> ['nullable', 'string', 'max:255'],
+            'country'=> ['nullable', 'string', 'max:255'],
+            'phone'=> ['nullable', 'string', 'max:50'],
         ]);
 
         OrderAddress::create($validated);
@@ -67,19 +67,19 @@ class OrderAddressController extends Controller
         $orderAddress = OrderAddress::findOrFail($id);
 
         $validated = $request->validate([
-            'order_id'              => ['required', 'exists:orders,id'],
-            'type'                  => ['required', 'string', 'max:50'],
-            'first_name'            => ['nullable', 'string', 'max:255'],
-            'last_name'             => ['nullable', 'string', 'max:255'],
-            'company'               => ['nullable', 'string', 'max:255'],
-            'street'                => ['nullable', 'string', 'max:255'],
-            'house_number'          => ['nullable', 'string', 'max:20'],
-            'house_number_addition' => ['nullable', 'string', 'max:20'],
-            'postal_code'           => ['nullable', 'string', 'max:20'],
-            'city'                  => ['nullable', 'string', 'max:255'],
-            'state'                 => ['nullable', 'string', 'max:255'],
-            'country'               => ['nullable', 'string', 'max:255'],
-            'phone'                 => ['nullable', 'string', 'max:50'],
+            'order_id'=> ['required', 'exists:orders,id'],
+            'type'=> ['required', 'string', 'max:50'],
+            'first_name'=> ['nullable', 'string', 'max:255'],
+            'last_name'=> ['nullable', 'string', 'max:255'],
+            'company'=> ['nullable', 'string', 'max:255'],
+            'street'=> ['nullable', 'string', 'max:255'],
+            'house_number'=> ['nullable', 'string', 'max:20'],
+            'house_number_addition'=> ['nullable', 'string', 'max:20'],
+            'postal_code'=> ['nullable', 'string', 'max:20'],
+            'city'=> ['nullable', 'string', 'max:255'],
+            'state'=> ['nullable', 'string', 'max:255'],
+            'country'=> ['nullable', 'string', 'max:255'],
+            'phone'=> ['nullable', 'string', 'max:50'],
         ]);
 
         $orderAddress->update($validated);

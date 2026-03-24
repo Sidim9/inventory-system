@@ -21,8 +21,9 @@
             <h5 class="mb-3 border-bottom pb-2">Ordergegevens</h5>
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
-                    <label class="form-label">Ordernummer <span class="text-danger">*</span></label>
-                    <input type="text" name="order_number" class="form-control" value="{{ old('order_number') }}" required>
+                    <label class="form-label">Ordernummer</label>
+                    <input type="text" name="order_number" class="form-control bg-light" value="{{ old('order_number', $suggestedOrderNumber) }}" readonly>
+                    <div class="form-text">Automatisch gegenereerd</div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Bron</label>

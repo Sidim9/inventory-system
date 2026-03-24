@@ -28,12 +28,12 @@ class OrderItemController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'order_id'     => ['required', 'exists:orders,id'],
-            'product_id'   => ['nullable', 'exists:products,id'],
-            'ean'          => ['nullable', 'string', 'max:255'],
-            'sku'          => ['nullable', 'string', 'max:255'],
-            'product_name' => ['required', 'string', 'max:255'],
-            'quantity'     => ['required', 'integer', 'min:1'],
+            'order_id'=> ['required', 'exists:orders,id'],
+            'product_id'=> ['nullable', 'exists:products,id'],
+            'ean'=> ['nullable', 'string', 'max:255'],
+            'sku'=> ['nullable', 'string', 'max:255'],
+            'product_name'=> ['required', 'string', 'max:255'],
+            'quantity'=> ['required', 'integer', 'min:1'],
             'unit_price'   => ['nullable', 'numeric', 'min:0'],
         ]);
 
@@ -41,23 +41,23 @@ class OrderItemController extends Controller
         if (!empty($validated['product_id'])) {
             $product = Product::find($validated['product_id']);
             if ($product) {
-                $validated['ean']          = $validated['ean']        ?: $product->ean;
-                $validated['sku']          = $validated['sku']        ?: $product->sku;
-                $validated['product_name'] = $validated['product_name'] ?: $product->name;
-                $validated['unit_price']   = $validated['unit_price'] ?? $product->price;
+                $validated['ean']= $validated['ean']?: $product->ean;
+                $validated['sku']= $validated['sku']?: $product->sku;
+                $validated['product_name']= $validated['product_name'] ?: $product->name;
+                $validated['unit_price']= $validated['unit_price'] ?? $product->price;
 
                 // Deduct stock and log movement
                 $stockBefore = $product->stock;
                 $stockAfter  = $stockBefore - $validated['quantity'];
 
                 StockMovement::create([
-                    'product_id'      => $product->id,
-                    'order_id'        => $validated['order_id'],
-                    'type'            => 'out',
-                    'quantity_change' => -$validated['quantity'],
-                    'stock_before'    => $stockBefore,
-                    'stock_after'     => $stockAfter,
-                    'note'            => 'Automatisch bij aanmaken orderregel',
+                    'product_id'=> $product->id,
+                    'order_id'=> $validated['order_id'],
+                    'type'=> 'out',
+                    'quantity_change'=> -$validated['quantity'],
+                    'stock_before'=> $stockBefore,
+                    'stock_after'=> $stockAfter,
+                    'note'=> 'Automatisch bij aanmaken orderregel',
                 ]);
 
                 $product->update(['stock' => $stockAfter]);
@@ -92,13 +92,13 @@ class OrderItemController extends Controller
         $orderItem = OrderItem::findOrFail($id);
 
         $validated = $request->validate([
-            'order_id'     => ['required', 'exists:orders,id'],
-            'product_id'   => ['nullable', 'exists:products,id'],
-            'ean'          => ['nullable', 'string', 'max:255'],
-            'sku'          => ['nullable', 'string', 'max:255'],
-            'product_name' => ['required', 'string', 'max:255'],
-            'quantity'     => ['required', 'integer', 'min:1'],
-            'unit_price'   => ['nullable', 'numeric', 'min:0'],
+            'order_id'=> ['required', 'exists:orders,id'],
+            'product_id'=> ['nullable', 'exists:products,id'],
+            'ean'=> ['nullable', 'string', 'max:255'],
+            'sku'=> ['nullable', 'string', 'max:255'],
+            'product_name'=> ['required', 'string', 'max:255'],
+            'quantity'=> ['required', 'integer', 'min:1'],
+            'unit_price'=> ['nullable', 'numeric', 'min:0'],
         ]);
 
         $orderItem->update($validated);
