@@ -7,7 +7,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <dl class="row mb-0">
-                    <dt class="col-sm-5">Order</dt><dd class="col-sm-7">{{ $orderAddress->orders->order_number ?? 'Onbekend' }}</dd>
+                    <dt class="col-sm-5">Order</dt><dd class="col-sm-7">{{ $orderAddress->order->order_number ?? 'Onbekend' }}</dd>
                     <dt class="col-sm-5">Type</dt><dd class="col-sm-7"><span class="badge bg-secondary">{{ $orderAddress->type }}</span></dd>
                     <dt class="col-sm-5">Naam</dt><dd class="col-sm-7">{{ $orderAddress->first_name }} {{ $orderAddress->last_name }}</dd>
                     <dt class="col-sm-5">Bedrijf</dt><dd class="col-sm-7">{{ $orderAddress->company ?? '-' }}</dd>

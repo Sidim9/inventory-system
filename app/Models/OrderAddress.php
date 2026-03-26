@@ -22,7 +22,7 @@ class OrderAddress extends Model
         'phone',
     ];
 
-    public function orders()
+    public function order()
     {
         return $this->belongsTo(Order::class);
     }

@@ -92,14 +92,57 @@ class OrderItemController extends Controller
         $orderItem = OrderItem::findOrFail($id);
 
         $validated = $request->validate([
-            'order_id'=> ['required', 'exists:orders,id'],
-            'product_id'=> ['nullable', 'exists:products,id'],
-            'ean'=> ['nullable', 'string', 'max:255'],
-            'sku'=> ['nullable', 'string', 'max:255'],
+            'order_id'    => ['required', 'exists:orders,id'],
+            'product_id'  => ['nullable', 'exists:products,id'],
+            'ean'         => ['nullable', 'string', 'max:255'],
+            'sku'         => ['nullable', 'string', 'max:255'],
             'product_name'=> ['required', 'string', 'max:255'],
-            'quantity'=> ['required', 'integer', 'min:1'],
-            'unit_price'=> ['nullable', 'numeric', 'min:0'],
+            'quantity'    => ['required', 'integer', 'min:1'],
+            'unit_price'  => ['nullable', 'numeric', 'min:0'],
         ]);
+
+        $oldProductId  = $orderItem->product_id;
+        $newProductId  = $validated['product_id'] ?? null;
+        $oldQuantity   = $orderItem->quantity;
+        $newQuantity   = $validated['quantity'];
+
+        // Return stock to the old product
+        if ($oldProductId) {
+            $oldProduct  = Product::find($oldProductId);
+            if ($oldProduct) {
+                $stockBefore = $oldProduct->stock;
+                $stockAfter  = $stockBefore + $oldQuantity;
+                StockMovement::create([
+                    'product_id'     => $oldProduct->id,
+                    'order_id'       => $oldProductId == $newProductId ? $validated['order_id'] : $orderItem->order_id,
+                    'type'           => 'in',
+                    'quantity_change' => $oldQuantity,
+                    'stock_before'   => $stockBefore,
+                    'stock_after'    => $stockAfter,
+                    'note'           => 'Terugboeking bij bewerken orderregel',
+                ]);
+                $oldProduct->update(['stock' => $stockAfter]);
+            }
+        }
+
+        // Deduct stock from the new product
+        if ($newProductId) {
+            $newProduct = Product::find($newProductId);
+            if ($newProduct) {
+                $stockBefore = $newProduct->stock;
+                $stockAfter  = $stockBefore - $newQuantity;
+                StockMovement::create([
+                    'product_id'     => $newProduct->id,
+                    'order_id'       => $validated['order_id'],
+                    'type'           => 'out',
+                    'quantity_change' => -$newQuantity,
+                    'stock_before'   => $stockBefore,
+                    'stock_after'    => $stockAfter,
+                    'note'           => 'Automatisch bij bewerken orderregel',
+                ]);
+                $newProduct->update(['stock' => $stockAfter]);
+            }
+        }
 
         $orderItem->update($validated);
 
@@ -112,6 +155,26 @@ class OrderItemController extends Controller
     {
         $orderItem = OrderItem::findOrFail($id);
         $orderId   = $orderItem->order_id;
+
+        // Return stock when a linked order item is removed
+        if ($orderItem->product_id) {
+            $product = Product::find($orderItem->product_id);
+            if ($product) {
+                $stockBefore = $product->stock;
+                $stockAfter  = $stockBefore + $orderItem->quantity;
+                StockMovement::create([
+                    'product_id'     => $product->id,
+                    'order_id'       => $orderId,
+                    'type'           => 'in',
+                    'quantity_change' => $orderItem->quantity,
+                    'stock_before'   => $stockBefore,
+                    'stock_after'    => $stockAfter,
+                    'note'           => 'Terugboeking bij verwijderen orderregel',
+                ]);
+                $product->update(['stock' => $stockAfter]);
+            }
+        }
+
         $orderItem->delete();
 
         return redirect()

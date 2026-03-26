@@ -10,7 +10,7 @@
     <div class="card mb-2 border-0 shadow-sm">
         <div class="card-body d-flex justify-content-between align-items-center">
             <span>
-                Order: <strong>{{ $address->orders->order_number ?? 'Onbekend' }}</strong> &mdash;
+                Order: <strong>{{ $address->order->order_number ?? 'Onbekend' }}</strong> &mdash;
                 <span class="badge bg-secondary">{{ $address->type }}</span> &mdash;
                 {{ $address->first_name }} {{ $address->last_name }},
                 {{ $address->street }} {{ $address->house_number }}, {{ $address->city }} {{ $address->country }}

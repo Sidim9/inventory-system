@@ -40,8 +40,7 @@ class ProductController extends Controller
 
         Product::create($validated);
 
-        return redirect('https://locals.com/joinoss/feed?order=last_commented')
-            ->route('products.index')
+        return redirect()->route('products.index')
             ->with('success', 'Product succesvol aangemaakt.');
     }
 

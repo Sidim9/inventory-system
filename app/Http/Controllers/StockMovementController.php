@@ -69,14 +69,27 @@ class StockMovementController extends Controller
         $stockMovement = StockMovement::findOrFail($id);
 
         $validated = $request->validate([
-            'product_id'=> ['required', 'exists:products,id'],
-            'order_id'=> ['nullable', 'exists:orders,id'],
-            'type'=> ['required', 'in:in,out,adjustment'],
+            'product_id'     => ['required', 'exists:products,id'],
+            'order_id'       => ['nullable', 'exists:orders,id'],
+            'type'           => ['required', 'in:in,out,adjustment'],
             'quantity_change'=> ['required', 'integer'],
-            'note'=> ['nullable', 'string', 'max:500'],
+            'note'           => ['nullable', 'string', 'max:500'],
         ]);
 
+        $oldProduct = Product::findOrFail($stockMovement->product_id);
+        $newProduct = Product::findOrFail($validated['product_id']);
+
+        // Reverse the effect of the old movement on the old product
+        $oldProduct->update(['stock' => $oldProduct->stock - $stockMovement->quantity_change]);
+
+        // Apply the new movement to the new product (reload in case it's the same product)
+        $newProduct->refresh();
+        $validated['stock_before'] = $newProduct->stock;
+        $validated['stock_after']  = $newProduct->stock + $validated['quantity_change'];
+
         $stockMovement->update($validated);
+
+        $newProduct->update(['stock' => $validated['stock_after']]);
 
         return redirect()
             ->route('stock_movements.index')
