@@ -36,6 +36,7 @@
                 <dl class="row mb-0">
                     <dt class="col-sm-5">Naam</dt><dd class="col-sm-7">{{ $order->customer_name ?: '-' }}</dd>
                     <dt class="col-sm-5">E-mail</dt><dd class="col-sm-7">{{ $order->customer_email ?: '-' }}</dd>
+                    <dt class="col-sm-5">Bedrijf</dt><dd class="col-sm-7">{{ $order->company_name ?: '-' }}</dd>
                     <dt class="col-sm-5">Telefoon</dt><dd class="col-sm-7">{{ $order->phone ?: '-' }}</dd>
                     <dt class="col-sm-5">Adres</dt>
                     <dd class="col-sm-7">

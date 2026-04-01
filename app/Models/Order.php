@@ -11,6 +11,7 @@ class Order extends Model
         'source',
         'customer_name',
         'customer_email',
+        'company_name',
         'phone',
         'street',
         'house_number',

@@ -59,6 +59,10 @@
                     <input type="email" name="customer_email" class="form-control" value="{{ old('customer_email', $order->customer_email) }}">
                 </div>
                 <div class="col-md-6">
+                    <label class="form-label">Bedrijf</label>
+                    <input type="text" name="company_name" class="form-control" value="{{ old('company_name', $order->company_name) }}">
+                </div>
+                <div class="col-md-6">
                     <label class="form-label">Telefoonnummer</label>
                     <input type="text" name="phone" class="form-control" value="{{ old('phone', $order->phone) }}">
                 </div>

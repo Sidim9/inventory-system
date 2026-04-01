@@ -25,7 +25,7 @@
             <tr>
                 <td><strong>{{ $order->order_number }}</strong></td>
                 <td>{{ $order->source ?: '-' }}</td>
-                <td>{{ $order->customer_name ?: '-' }}</td>
+                <td>{{ $order->customer_name ?: '-' }}{{ $order->company_name ? ' (' . $order->company_name . ')' : ' (geen bedrijfsname) ' }}</td>
                 <td><span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span></td>
                 <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
                 <td>{{ $order->items_count ?? '-' }}</td>
