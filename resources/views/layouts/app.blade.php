@@ -26,13 +26,7 @@
                         <a class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}" href="{{ route('orders.index') }}">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('order_items.*') ? 'active' : '' }}" href="{{ route('order_items.index') }}">Orderregels</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('stock_movements.*') ? 'active' : '' }}" href="{{ route('stock_movements.index') }}">Voorraadbewegingen</a>
-                    </li>
-                    <li>
-                        <a class="nav-link {{ request()->routeIs('order_addresses.*') ? 'active' : '' }}" href="{{ route('order_addresses.index') }}">Orderadressen</a>
                     </li>
                 </ul>
             </div>

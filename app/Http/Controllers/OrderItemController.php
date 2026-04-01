@@ -10,13 +10,6 @@ use Illuminate\Http\Request;
 
 class OrderItemController extends Controller
 {
-    public function index()
-    {
-        $orderItems = OrderItem::with(['order', 'product'])->latest()->get();
-
-        return view('order_items.index', compact('orderItems'));
-    }
-
     public function create()
     {
         $orders   = Order::latest()->get();
@@ -69,13 +62,6 @@ class OrderItemController extends Controller
         return redirect()
             ->route('orders.show', $validated['order_id'])
             ->with('success', 'Product toegevoegd aan order.');
-    }
-
-    public function show(string $id)
-    {
-        $orderItem = OrderItem::with(['order', 'product'])->findOrFail($id);
-
-        return view('order_items.show', compact('orderItem'));
     }
 
     public function edit(string $id)
