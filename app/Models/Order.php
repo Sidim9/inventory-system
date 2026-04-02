@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
     protected $fillable = [
+        'picklist_id',
         'order_number',
         'source',
         'customer_name',
@@ -33,6 +35,11 @@ class Order extends Model
         $prefix = 'INV-' . now()->format('Ymd') . '-';
         $count = static::where('order_number', 'like', $prefix . '%')->count();
         return $prefix . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function picklist(): BelongsTo
+    {
+        return $this->belongsTo(Picklist::class);
     }
 
     public function items()
