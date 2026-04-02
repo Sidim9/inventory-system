@@ -11,9 +11,16 @@ class StockMovementController extends Controller
 {
     public function index()
     {
-        $stockMovements = StockMovement::with(['product', 'order'])->latest()->get();
+        $products = Product::whereHas('stockMovements')
+            ->with(['stockMovements'])
+            ->orderBy('name')
+            ->get()
+            ->each(function ($product) {
+                $product->total_in  = $product->stockMovements->where('type', 'in')->sum('quantity_change');
+                $product->total_out = abs($product->stockMovements->where('type', 'out')->sum('quantity_change'));
+            });
 
-        return view('stock_movements.index', compact('stockMovements'));
+        return view('stock_movements.index', compact('products'));
     }
 
     public function create()

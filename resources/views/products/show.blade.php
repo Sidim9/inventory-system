@@ -29,6 +29,44 @@
             <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary">Bewerk</a>
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Terug</a>
         </div>
+
+        {{-- Stock movement log --}}
+        <h5 class="mt-5 mb-3">Voorraadgeschiedenis</h5>
+        @if ($product->stockMovements->isEmpty())
+            <p class="text-muted">Geen bewegingen gevonden voor dit product.</p>
+        @else
+        <div class="card border-0 shadow-sm">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Type</th>
+                        <th>Wijziging</th>
+                        <th>Voor</th>
+                        <th>Na</th>
+                        <th>Order</th>
+                        <th>Notitie</th>
+                        <th>Datum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($product->stockMovements as $movement)
+                    @php
+                        $typeColors = ['in' => 'success', 'out' => 'danger', 'adjustment' => 'warning'];
+                    @endphp
+                    <tr>
+                        <td><span class="badge bg-{{ $typeColors[$movement->type] ?? 'secondary' }}">{{ $movement->type }}</span></td>
+                        <td>{{ $movement->quantity_change > 0 ? '+' : '' }}{{ $movement->quantity_change }}</td>
+                        <td>{{ $movement->stock_before }}</td>
+                        <td>{{ $movement->stock_after }}</td>
+                        <td>{{ $movement->order->order_number ?? '-' }}</td>
+                        <td>{{ $movement->note ?: '-' }}</td>
+                        <td>{{ $movement->created_at->format('d-m-Y H:i') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
     </div>
 </div>
 @endsection

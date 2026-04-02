@@ -49,7 +49,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['stockMovements' => fn($q) => $q->latest()])->findOrFail($id);
 
         return view('products.show', compact('product'));
     }
