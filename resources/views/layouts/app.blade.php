@@ -26,7 +26,7 @@
                         <a class="nav-link {{ request()->routeIs('orders.*') ? 'active' : '' }}" href="{{ route('orders.index') }}">Orders</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('stock_movements.*') ? 'active' : '' }}" href="{{ route('stock_movements.index') }}">Voorraadbewegingen</a>
+                        <a class="nav-link {{ request()->routeIs('picklists.*') ? 'active' : '' }}" href="{{ route('picklists.index') }}">Picklijsten</a>
                     </li>
                 </ul>
             </div>

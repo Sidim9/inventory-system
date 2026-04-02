@@ -9,7 +9,10 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::latest('ordered_at')->get();
+        $orders = Order::whereNull('picklist_id')
+            ->withCount('items')
+            ->latest('ordered_at')
+            ->get();
 
         return view('orders.index', compact('orders'));
     }
