@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -28,6 +29,7 @@ class Order extends Model
 
     protected $casts = [
         'ordered_at' => 'datetime',
+        'status'     => OrderStatus::class,
     ];
 
     public static function generateOrderNumber(): string
