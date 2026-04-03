@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -38,7 +39,20 @@ class ProductController extends Controller
         $validated['minimum_stock']= $validated['minimum_stock'] ?? 0;
         $validated['pick_order']= $validated['pick_order'] ?? 0;
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        // Log initial stock as an incoming stock movement
+        if ($product->stock > 0) {
+            StockMovement::create([
+                'product_id'=> $product->id,
+                'order_id'=> null,
+                'type'=> 'in',
+                'quantity_change'=> $product->stock,
+                'stock_before'=> 0,
+                'stock_after'=> $product->stock,
+                'note'            => 'Initiële voorraad',
+            ]);
+        }
 
         return redirect()->route('products.index')
             ->with('success', 'Product succesvol aangemaakt.');
@@ -88,7 +102,24 @@ class ProductController extends Controller
         $validated['minimum_stock']= $validated['minimum_stock'] ?? 0;
         $validated['pick_order']= $validated['pick_order'] ?? 0;
 
+        $stockBefore = $product->stock;
+
         $product->update($validated);
+
+        // Log stock change if the stock value was manually adjusted
+        $stockAfter = (int) $validated['stock'];
+        if ($stockAfter !== $stockBefore) {
+            $diff = $stockAfter - $stockBefore;
+            StockMovement::create([
+                'product_id'=> $product->id,
+                'order_id'=> null,
+                'type'=> $diff > 0 ? 'in' : 'out',
+                'quantity_change'=> $diff,
+                'stock_before'=> $stockBefore,
+                'stock_after'=> $stockAfter,
+                'note'=> 'Handmatige voorraadaanpassing',
+            ]);
+        }
 
         return redirect()
             ->route('products.index')
