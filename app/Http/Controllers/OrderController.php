@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class OrderController extends Controller
 {
@@ -39,11 +41,11 @@ class OrderController extends Controller
             'postal_code'=> ['nullable', 'string', 'max:20'],
             'city'=> ['nullable', 'string', 'max:255'],
             'country'=> ['nullable', 'string', 'max:10'],
-            'status'=> ['required', 'string', 'max:50'],
             'notes'=> ['nullable', 'string'],
             'ordered_at'=> ['nullable', 'date'],
         ]);
 
+        $validated['status']       = OrderStatus::Pending->value;
         $validated['ordered_at']   = $validated['ordered_at'] ?? now();
         $validated['order_number']  = $validated['order_number'] ?: Order::generateOrderNumber();
 
@@ -85,7 +87,7 @@ class OrderController extends Controller
             'postal_code'=> ['nullable', 'string', 'max:20'],
             'city'=> ['nullable', 'string', 'max:255'],
             'country'=> ['nullable', 'string', 'max:10'],
-            'status'=> ['required', 'string', 'max:50'],
+            'status'=> ['required', new Enum(OrderStatus::class)],
             'notes'=> ['nullable', 'string'],
             'ordered_at'=> ['nullable', 'date'],
         ]);
@@ -95,6 +97,25 @@ class OrderController extends Controller
         return redirect()
             ->route('orders.show', $order->id)
             ->with('success', 'Order succesvol bijgewerkt.');
+    }
+
+    public function receive(Order $order)
+    {
+        $order->update(['status' => OrderStatus::Received->value]);
+
+        // Mark the picklist as fully processed when all its orders are received
+        if ($order->picklist_id) {
+            $picklist = $order->picklist;
+            $allReceived = $picklist->orders()
+                ->where('status', '!=', OrderStatus::Received->value)
+                ->doesntExist();
+
+            if ($allReceived) {
+                $picklist->update(['processed_at' => now()]);
+            }
+        }
+
+        return back()->with('success', "Order {$order->order_number} gemarkeerd als ontvangen.");
     }
 
     public function destroy(string $id)

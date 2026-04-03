@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Picklist;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ class PicklistController extends Controller
 
             Order::whereIn('id', $orders->pluck('id'))->update([
                 'picklist_id' => $picklist->id,
+                'status'      => OrderStatus::Shipped->value,
             ]);
 
             return $picklist;

@@ -12,6 +12,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::resource('products', ProductController::class);
 Route::resource('orders', OrderController::class);
+Route::post('orders/{order}/receive', [OrderController::class, 'receive'])->name('orders.receive');
 Route::resource('order_items', OrderItemController::class);
 Route::resource('stock_movements', StockMovementController::class);
 
