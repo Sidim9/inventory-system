@@ -30,15 +30,22 @@
         </thead>
         <tbody>
             @forelse ($picklist->orders as $order)
-            @php $statusColors = ['pending'=>'warning','processing'=>'info','shipped'=>'primary','delivered'=>'success','cancelled'=>'danger']; @endphp
             <tr>
                 <td><strong>{{ $order->order_number }}</strong></td>
                 <td>{{ $order->customer_name ?: '-' }}{{ $order->company_name ? ' (' . $order->company_name . ')' : '' }}</td>
-                <td><span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span></td>
+                <td><span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
                 <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
                 <td>{{ $order->items->count() }}</td>
                 <td class="text-end">
-                    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a>
+                    <div class="d-flex gap-1 justify-content-end">
+                        <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a>
+                        @if ($order->status !== \App\Enums\OrderStatus::Received)
+                        <form action="{{ route('orders.receive', $order->id) }}" method="POST">
+                            @csrf
+                            <button class="btn btn-sm btn-success">Ontvangen</button>
+                        </form>
+                        @endif
+                    </div>
                 </td>
             </tr>
             @empty

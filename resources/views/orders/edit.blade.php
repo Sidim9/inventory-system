@@ -32,8 +32,8 @@
                 <div class="col-md-6">
                     <label class="form-label">Status <span class="text-danger">*</span></label>
                     <select name="status" class="form-select" required>
-                        @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
-                            <option value="{{ $s }}" {{ old('status', $order->status) === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+                        @foreach(\App\Enums\OrderStatus::cases() as $status)
+                            <option value="{{ $status->value }}" {{ old('status', $order->status->value) === $status->value ? 'selected' : '' }}>{{ $status->label() }}</option>
                         @endforeach
                     </select>
                 </div>

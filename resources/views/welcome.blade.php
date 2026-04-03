@@ -10,7 +10,7 @@
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-4">
                 <div class="display-6 fw-bold text-primary">{{ $totalOrders }}</div>
-                <div class="text-muted small mt-1">Totaal orders</div>
+                <div class="text-muted small mt-1">Actieve orders</div>
             </div>
             <div class="card-footer bg-white border-0 pb-3">
                 <a href="{{ route('orders.index') }}" class="btn btn-sm btn-outline-primary">Bekijk orders</a>
@@ -20,11 +20,11 @@
     <div class="col-md-3 col-sm-6">
         <div class="card border-0 shadow-sm text-center">
             <div class="card-body py-4">
-                <div class="display-6 fw-bold text-success">{{ $totalSoldItems }}</div>
-                <div class="text-muted small mt-1">Verkochte producten</div>
+                <div class="display-6 fw-bold text-secondary">{{ $totalPicklists }}</div>
+                <div class="text-muted small mt-1">Picklijsten</div>
             </div>
             <div class="card-footer bg-white border-0 pb-3">
-                <a href="{{ route('order_items.index') }}" class="btn btn-sm btn-outline-success">Bekijk orderregels</a>
+                <a href="{{ route('picklists.index') }}" class="btn btn-sm btn-outline-secondary">Bekijk picklijsten</a>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
     {{-- Latest orders --}}
     <div class="col">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white fw-semibold">Laatste orders</div>
+            <div class="card-header bg-white fw-semibold">Actieve orders</div>
             @if ($latestOrders->isEmpty())
                 <div class="card-body text-muted">Nog geen orders aangemaakt.</div>
             @else
@@ -84,11 +84,10 @@
                     </thead>
                     <tbody>
                         @foreach ($latestOrders as $order)
-                        @php $statusColors = ['pending'=>'warning','processing'=>'info','shipped'=>'primary','delivered'=>'success','cancelled'=>'danger']; @endphp
                         <tr>
                             <td><strong>{{ $order->order_number }}</strong></td>
                             <td>{{ $order->customer_name ?: '-' }}</td>
-                            <td><span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span></td>
+                            <td><span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
                             <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
                             <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a></td>
                         </tr>

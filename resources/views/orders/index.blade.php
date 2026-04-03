@@ -45,7 +45,6 @@
             </thead>
             <tbody>
                 @forelse ($orders as $order)
-                @php $statusColors = ['pending'=>'warning','processing'=>'info','shipped'=>'primary','delivered'=>'success','cancelled'=>'danger']; @endphp
                 <tr>
                     <td>
                         <input type="checkbox"
@@ -56,7 +55,7 @@
                     <td><strong>{{ $order->order_number }}</strong></td>
                     <td>{{ $order->source ?: '-' }}</td>
                     <td>{{ $order->customer_name ?: '-' }}{{ $order->company_name ? ' (' . $order->company_name . ')' : '' }}</td>
-                    <td><span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span></td>
+                    <td><span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
                     <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
                     <td>{{ $order->items_count }}</td>
                     <td class="text-end">

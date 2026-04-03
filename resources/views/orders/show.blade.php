@@ -20,8 +20,7 @@
                     <dt class="col-sm-5">Bron</dt><dd class="col-sm-7">{{ $order->source ?: '-' }}</dd>
                     <dt class="col-sm-5">Status</dt>
                     <dd class="col-sm-7">
-                        @php $statusColors = ['pending'=>'warning','processing'=>'info','shipped'=>'primary','delivered'=>'success','cancelled'=>'danger']; @endphp
-                        <span class="badge bg-{{ $statusColors[$order->status] ?? 'secondary' }}">{{ $order->status }}</span>
+                        <span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span>
                     </dd>
                     <dt class="col-sm-5">Besteldatum</dt><dd class="col-sm-7">{{ $order->ordered_at?->format('d-m-Y H:i') ?? '-' }}</dd>
                     <dt class="col-sm-5">Notities</dt><dd class="col-sm-7">{{ $order->notes ?: '-' }}</dd>

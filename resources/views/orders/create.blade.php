@@ -30,12 +30,9 @@
                     <input type="text" name="source" class="form-control" value="{{ old('source') }}" placeholder="bijv. Amazon, Webshop, Handmatig">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Status <span class="text-danger">*</span></label>
-                    <select name="status" class="form-select" required>
-                        @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
-                            <option value="{{ $s }}" {{ old('status', 'pending') === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
+                    <label class="form-label">Status</label>
+                    <input type="text" class="form-control" value="Wachtend" disabled>
+                    <input type="hidden" name="status" value="pending">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Besteldatum</label>
