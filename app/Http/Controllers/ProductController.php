@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::orderBy('pick_order')->orderBy('name')->get();
+        $products = Product::orderByRaw('pick_order IS NULL, pick_order')->orderBy('name')->get();
 
         return view('products.index', compact('products'));
     }
@@ -31,13 +31,13 @@ class ProductController extends Controller
             'price'=> ['nullable', 'numeric', 'min:0'],
             'stock'=> ['required', 'integer', 'min:0'],
             'minimum_stock'=> ['nullable', 'integer', 'min:0'],
-            'pick_order'=> ['nullable', 'integer', 'min:0'],
+            'pick_order'=> ['nullable', 'integer', 'min:1', 'unique:products,pick_order'],
             'is_active'=> ['nullable', 'boolean'],
         ]);
 
         $validated['is_active']= $request->has('is_active');
         $validated['minimum_stock']= $validated['minimum_stock'] ?? 0;
-        $validated['pick_order']= $validated['pick_order'] ?? 0;
+        $validated['pick_order']= $validated['pick_order'] ?? null;
 
         $product = Product::create($validated);
 
@@ -94,13 +94,13 @@ class ProductController extends Controller
             'price'=> ['nullable', 'numeric', 'min:0'],
             'stock'=> ['required', 'integer', 'min:0'],
             'minimum_stock'=> ['nullable', 'integer', 'min:0'],
-            'pick_order'=> ['nullable', 'integer', 'min:0'],
+            'pick_order'=> ['nullable', 'integer', 'min:1', 'unique:products,pick_order,' . $product->id],
             'is_active'=> ['nullable', 'boolean'],
         ]);
 
         $validated['is_active']= $request->has('is_active');
         $validated['minimum_stock']= $validated['minimum_stock'] ?? 0;
-        $validated['pick_order']= $validated['pick_order'] ?? 0;
+        $validated['pick_order']= $validated['pick_order'] ?? null;
 
         $stockBefore = $product->stock;
 

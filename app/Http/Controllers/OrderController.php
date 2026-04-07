@@ -58,7 +58,14 @@ class OrderController extends Controller
 
     public function show(string $id)
     {
-        $order = Order::with(['items.product', 'stockMovements.product'])->findOrFail($id);
+        $order = Order::with([
+            'items' => fn ($q) => $q->join('products', 'products.id', '=', 'order_items.product_id')
+                ->orderBy('products.pick_order')
+                ->orderBy('products.name')
+                ->select('order_items.*'),
+            'items.product',
+            'stockMovements.product',
+        ])->findOrFail($id);
 
         return view('orders.show', compact('order'));
     }

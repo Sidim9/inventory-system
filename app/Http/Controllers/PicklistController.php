@@ -63,7 +63,22 @@ class PicklistController extends Controller
 
     public function show(Picklist $picklist)
     {
-        $picklist->load(['orders.items.product']);
+        $picklist->load([
+            'orders',
+            'orders.items' => fn ($q) => $q->join('products', 'products.id', '=', 'order_items.product_id')
+                ->orderByRaw('products.pick_order IS NULL, products.pick_order')
+                ->orderBy('products.name')
+                ->select('order_items.*'),
+            'orders.items.product',
+        ]);
+
+        // Sort orders by the lowest pick_order item they contain
+        // so the warehouse worker walks in shelf order across all orders
+        $picklist->setRelation('orders',
+            $picklist->orders->sortBy(fn ($order) =>
+                $order->items->min(fn ($item) => $item->product?->pick_order ?? PHP_INT_MAX)
+            )->values()
+        );
 
         return view('picklists.show', compact('picklist'));
     }
