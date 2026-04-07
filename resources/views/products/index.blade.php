@@ -26,7 +26,7 @@
             @forelse ($products as $product)
             <tr>
                 <td class="text-muted small">{{ $product->pick_order }}</td>
-                <td><strong>{{ $product->name }}</strong></td>
+                <td><strong><a href="{{ route('products.show', $product->id) }}" class="text-decoration-none text-dark">{{ $product->name }}</a></strong></td>
                 <td><code>{{ $product->sku }}</code></td>
                 <td>{{ $product->ean ?: '-' }}</td>
                 <td>{{ $product->type ?: '-' }}</td>
@@ -40,7 +40,6 @@
                 <td>{!! $product->is_active ? '<span class="badge bg-success">Actief</span>' : '<span class="badge bg-secondary">Inactief</span>' !!}</td>
                 <td class="text-end">
                     <div class="d-flex gap-1 justify-content-end">
-                        <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a>
                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-primary">Bewerk</a>
                         <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                             @csrf

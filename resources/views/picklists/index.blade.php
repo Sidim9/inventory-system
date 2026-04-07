@@ -24,7 +24,7 @@
         <tbody>
             @foreach ($picklists as $picklist)
             <tr>
-                <td><strong>{{ $picklist->name }}</strong></td>
+                <td><strong><a href="{{ route('picklists.show', $picklist->id) }}" class="text-decoration-none text-dark">{{ $picklist->name }}</a></strong></td>
                 <td class="text-center">{{ $picklist->orders_count }}</td>
                 <td class="text-center">{{ $picklist->total_items }}</td>
                 <td>{{ $picklist->created_at->format('d-m-Y H:i') }}</td>
@@ -34,9 +34,6 @@
                     @else
                         <span class="text-muted">—</span>
                     @endif
-                </td>
-                <td class="text-end">
-                    <a href="{{ route('picklists.show', $picklist) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a>
                 </td>
             </tr>
             @endforeach

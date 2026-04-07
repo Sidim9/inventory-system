@@ -31,14 +31,12 @@
         <tbody>
             @forelse ($picklist->orders as $order)
             <tr>
-                <td><strong>{{ $order->order_number }}</strong></td>
+                <td><strong><a href="{{ route('orders.show', $order->id) }}" class="text-decoration-none text-dark">{{ $order->order_number }}</a></strong></td>
                 <td>{{ $order->customer_name ?: '-' }}{{ $order->company_name ? ' (' . $order->company_name . ')' : '' }}</td>
                 <td><span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
                 <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
                 <td>{{ $order->items->count() }}</td>
                 <td class="text-end">
-                    <div class="d-flex gap-1 justify-content-end">
-                        <a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a>
                         @if ($order->status !== \App\Enums\OrderStatus::Received)
                         <form action="{{ route('orders.receive', $order->id) }}" method="POST">
                             @csrf

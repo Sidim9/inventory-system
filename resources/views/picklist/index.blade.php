@@ -53,7 +53,7 @@
         </table>
     </div>
     <button type="submit" class="btn btn-primary">Volgorde opslaan</button>
-    <a href="{{ route('picklist.index') }}" class="btn btn-secondary ms-1">Annuleren</a>
+    <a href="{{ route('picklists.index') }}" class="btn btn-secondary ms-1">Annuleren</a>
 </form>
 @endif
 @endsection

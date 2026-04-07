@@ -52,10 +52,9 @@
             <ul class="list-group list-group-flush">
                 @foreach ($lowStockProducts as $product)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ $product->name }}</strong>
-                        <small class="text-muted ms-1">{{ $product->ean ?: $product->sku }}</small>
-                    </div>
+                    <a href="{{ route('products.show', $product->id) }}" class="text-decoration-none text-dark">
+                        <strong>{{ $product->ean }} -> {{ $product->name }}</strong>
+                    </a>
                     <span class="badge bg-danger">{{ $product->stock }} / min {{ $product->minimum_stock }}</span>
                 </li>
                 @endforeach
@@ -79,17 +78,15 @@
                             <th>Klant</th>
                             <th>Status</th>
                             <th>Datum</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($latestOrders as $order)
                         <tr>
-                            <td><strong>{{ $order->order_number }}</strong></td>
+                            <td><strong><a href="{{ route('orders.show', $order->id) }}" class="text-decoration-none text-dark">{{ $order->order_number }}</a></strong></td>
                             <td>{{ $order->customer_name ?: '-' }}</td>
                             <td><span class="badge bg-{{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
                             <td>{{ $order->ordered_at?->format('d-m-Y') ?? '-' }}</td>
-                            <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-sm btn-outline-secondary">Bekijk</a></td>
                         </tr>
                         @endforeach
                     </tbody>
