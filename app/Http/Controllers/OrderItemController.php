@@ -39,6 +39,13 @@ class OrderItemController extends Controller
                 $validated['product_name']= $validated['product_name'] ?: $product->name;
                 $validated['unit_price']= $validated['unit_price'] ?? $product->price;
 
+                // Check stock availability
+                if ($product->stock < $validated['quantity']) {
+                    return back()->withInput()->withErrors([
+                        'quantity' => "Onvoldoende voorraad. Beschikbaar: {$product->stock}, gevraagd: {$validated['quantity']}.",
+                    ]);
+                }
+
                 // Deduct stock and log movement
                 $stockBefore = $product->stock;
                 $stockAfter  = $stockBefore - $validated['quantity'];
@@ -115,6 +122,13 @@ class OrderItemController extends Controller
         if ($newProductId) {
             $newProduct = Product::find($newProductId);
             if ($newProduct) {
+                // Check stock availability
+                if ($newProduct->stock < $newQuantity) {
+                    return back()->withInput()->withErrors([
+                        'quantity' => "Onvoldoende voorraad. Beschikbaar: {$newProduct->stock}, gevraagd: {$newQuantity}.",
+                    ]);
+                }
+
                 $stockBefore = $newProduct->stock;
                 $stockAfter  = $stockBefore - $newQuantity;
                 StockMovement::create([
